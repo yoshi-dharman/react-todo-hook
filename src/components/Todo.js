@@ -1,15 +1,22 @@
-import React, { useState } from 'react'
-// import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from "react-redux";
+import { getTodo } from '../redux/actions/todo.get.actions';
+import { postTodo } from '../redux/actions/todo.post.actions';
+import { putTodo } from '../redux/actions/todo.put.actions';
+import { deleteTodo } from '../redux/actions/todo.delete.actions';
 
+// import { addTodo, editTodo, deleteTodo } from '../redux/actions/todo.actions';
 import TodoItem from './TodoItem';
-import { addTodo, editTodo, deleteTodo } from '../redux/actions/todo.actions';
-import { Col, Row, Form, Button, Accordion } from 'react-bootstrap';
+import { Col, Row, Form, Button, Accordion, Spinner } from 'react-bootstrap';
 import ModalTodo from './ModalTodo';
 
 function Todo() {
     const dispatch = useDispatch();
-    const todoList = useSelector((state) => state.todoList);
+    const todo = useSelector((state) => state.Todo);
+
+    useEffect(() => {
+        dispatch(getTodo());
+      }, [dispatch]);
 
     //MODAL
     const [show, setShow] = useState(false);
@@ -22,17 +29,17 @@ function Todo() {
 
     let addHandle = (e) => {
         e.preventDefault();
-        dispatch(addTodo(e.target.todoItem.value))
+        dispatch(postTodo(e.target.todoItem.value))
         e.target.todoItem.value = "";
     }
 
     let editHandle = (id, newTodo) => {
-        // props.editTodo(id, newTodo);
-        dispatch(editTodo(id,newTodo));
+
+        dispatch(putTodo(id,newTodo));
     }
 
     let deleteHandle = (id) => {
-        // props.deleteTodo(id);
+
         dispatch(deleteTodo(id));
     }
 
@@ -61,21 +68,26 @@ function Todo() {
         </Row>
         <hr></hr>
 
-        <Row className="mt-4">
+        <Row className="mt-4 text-center">
             <Col xs={12}>
                 <h2>Todo List</h2>
             </Col>
             <Col className="mt-3">
-                <Accordion>
-                    {todoList.map((item) => {
-                        return <TodoItem key={item.id} id={item.id} todo={item.todo}
-                        deleteHandle={deleteHandle}
-                        setEditTodo={setEditTodoItem}
-                        handleShow={handleShow}
-                        />
-                    })}
-                    {/* <li>todo</li> */}
-                </Accordion>
+
+                {todo.isLoading === true 
+                ? <Spinner className="mt-3" animation="border" />
+                :   <Accordion className="text-left">
+                        {todo.todoList.map((item) => {
+                            return <TodoItem key={item.id} id={item.id} todo={item.todo}
+                            deleteHandle={deleteHandle}
+                            setEditTodo={setEditTodoItem}
+                            handleShow={handleShow}
+                            />
+                        })}
+                    </Accordion>
+                }
+
+                
             </Col>
         </Row>
         </>
