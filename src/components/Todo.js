@@ -7,7 +7,7 @@ import { addTodo, editTodo, deleteTodo } from '../redux/actions/todo.actions';
 import { Col, Row, Form, Button, Accordion } from 'react-bootstrap';
 import ModalTodo from './ModalTodo';
 
-function Todo(props) {
+function Todo() {
     const dispatch = useDispatch();
     const todoList = useSelector((state) => state.todoList);
 
